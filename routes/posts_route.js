@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addPost,getPosts } from "../controllers/posts_controller.js";
+import { addPost,getPosts, updatePostById } from "../controllers/posts_controller.js";
 
 const postRouter = new Router();
 
@@ -37,6 +37,34 @@ postRouter.get("/", async (req, res) => {
         console.error("Error in fetching posts:", err);
 
         return res.status(500).json({ error: "Failed to fetch posts" });
+    }
+});
+
+postRouter.put("/:id", async (req, res) => {
+    const { message, ...extra } = req.body;
+    const extraFields = Object.keys(extra);
+
+    if (extraFields.length > 0) {
+        return res.status(400).json({ error: `Invalid fields provided: ${unexpectedFieldNames.join(", ")}` });
+    }
+
+    if (!message) {
+        return res.status(400).json({ error: "Content is required" });
+    }
+
+    try {
+
+        const post = await updatePostById(req.params.id, { message });
+        
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+        
+        return res.json(post);
+    } catch (err) {
+        console.error("Error occurred while updating the post:", err);
+
+        return res.status(500).json({ error: "Failed to update post" });
     }
 });
 

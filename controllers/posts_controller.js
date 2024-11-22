@@ -1,4 +1,6 @@
 import Post from "../models/posts_model.js";
+import mongoose from "mongoose";
+
 export async function addPost(post) {
     return await Post.create(post);
 }
@@ -11,4 +13,23 @@ export async function getPosts(filters) {
     }
 
     return await Post.find(query);
+}
+
+export async function getPostById(id) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+      return null;
+  }
+
+  return await Post.findById(id);
+}
+
+export async function updatePostById(id, { message }) {
+  const post = await getPostById(id);
+
+  if (post) {
+      post.message = message;
+      post.save();
+  }
+
+  return post;
 }
