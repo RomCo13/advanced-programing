@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addPost } from "../controllers/posts_controller.js";
+import { addPost,getPosts } from "../controllers/posts_controller.js";
 
 const postRouter = new Router();
 
@@ -24,6 +24,19 @@ postRouter.post("/", async (req, res) => {
         console.error("Error in creating post:", err);
 
         return res.status(500).json({ error: "Failed to create post" });
+    }
+});
+
+postRouter.get("/", async (req, res) => {
+    try {
+        const { sender } = req.query;
+        const posts = await getPosts({ sender });
+
+        return res.json(posts);
+    } catch (err) {
+        console.error("Error in fetching posts:", err);
+
+        return res.status(500).json({ error: "Failed to fetch posts" });
     }
 });
 
