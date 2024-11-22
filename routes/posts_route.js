@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addPost,getPosts, updatePostById } from "../controllers/posts_controller.js";
+import { addPost,getPosts, getPostById, updatePostById } from "../controllers/posts_controller.js";
 
 const postRouter = new Router();
 
@@ -38,6 +38,16 @@ postRouter.get("/", async (req, res) => {
 
         return res.status(500).json({ error: "Failed to fetch posts" });
     }
+});
+
+postRouter.get("/:id", async (req, res) => {
+    const post = await getPostById(req.params.id);
+
+    if (!post) {
+        return res.status(404).json({ error: "Post not found" });
+    }
+
+    return res.json(post);
 });
 
 postRouter.put("/:id", async (req, res) => {
