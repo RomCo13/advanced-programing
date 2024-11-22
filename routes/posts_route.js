@@ -1,13 +1,30 @@
-const express = require("express");
-const router = express.Router();
-const postsController = require("../controllers/posts_controller");
+import { Router } from "express";
+import { addPost } from "../controllers/posts_controller.js";
 
-router.get("/", postsController.getAllPosts);
+const postRouter = new Router();
 
-router.get("/:id", postsController.getPostById);
+postRouter.post("/", async (req, res) => {
+    const { message, sender, ...extra } = req.body;
 
-router.post("/", postsController.createPost);
+    const extraFields = Object.keys(extra);
 
-router.delete("/:id", postsController.deletePost);
+    if (extraFields.length > 0) {
+        return res.status(400).json({ error: `Unexpected extra fields: ${extraFields.join(", ")}` });
+    }
 
-module.exports = router;
+    if (!message || !sender) {
+        return res.status(400).json({ error: "Message and sender are required" });
+    }
+
+    try {
+        const newPost = await addPost({ sender, message });
+
+        return res.status(201).json(newPost);
+    } catch (err) {
+        console.error("Error in creating post:", err);
+
+        return res.status(500).json({ error: "Failed to create post" });
+    }
+});
+
+export default postRouter;

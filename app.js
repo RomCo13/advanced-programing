@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import postRouter from "./routes/posts.js";
+import postRouter from "./routes/posts_route.js";
 
 export function createApp() {
     const app = express();

@@ -1,12 +1,8 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const postSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-  senderId: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+const postSchema = new Schema({
+    sender: { type: String, required: true },
+    message: { type: String, required: true },
 });
 
-const postModel = mongoose.model("Posts", postSchema);
-
-module.exports = postModel;
+export default model("Post", postSchema);
